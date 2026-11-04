@@ -1,218 +1,85 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monster Detective 怪獸大搜查</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Fredoka', 'Comic Sans MS', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #game-container {
-      width: 100%;
-      max-width: 800px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    /* Header & Progress */
-    header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #ffffff;
-      padding: 12px 24px;
-      border-radius: 20px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .level-badge {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #0288d1;
-    }
-    .stamps {
-      display: flex;
-      gap: 10px;
-    }
-    .stamp {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: #e0e0e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      border: 2px dashed #9e9e9e;
-    }
-    .stamp.active {
-      background-color: #ffd54f;
-      border: 2px solid #ffa000;
-    }
+# PROMPT: Interactive Web Game Developer for Primary 1 English (Hong Kong Curriculum)
 
-    /* Clue Banner */
-    .clue-card {
-      width: 100%;
-      background: #ffffff;
-      border: 4px solid #4fc3f7;
-      border-radius: 24px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-      margin-bottom: 25px;
-      position: relative;
-    }
-    .clue-title {
-      font-size: 1rem;
-      color: #757575;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .clue-text {
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: #2c3e50;
-      margin-bottom: 12px;
-    }
-    .clue-text span.highlight {
-      color: #e91e63;
-      text-decoration: underline;
-    }
-    .audio-btn {
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-size: 1rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 8px rgba(76,175,80,0.3);
-      transition: transform 0.1s;
-    }
-    .audio-btn:active {
-      transform: scale(0.95);
-    }
+## Role & Goal
+You are an expert Educational Game Developer and UX Designer specializing in early childhood language learning and gamified instruction. Your task is to generate a SINGLE, fully functional, self-contained `index.html` file (containing HTML, Inline CSS, and JavaScript with Web Audio API / SVG graphics) that can be hosted directly on GitHub Pages.
 
-    /* Monster Grid */
-    .monster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
-    .monster-card {
-      background: white;
-      border-radius: 20px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-      border: 4px solid transparent;
-      transition: all 0.2s ease;
-      min-height: 220px;
-      position: relative;
-    }
-    .monster-card:hover {
-      transform: translateY(-5px);
-      border-color: #81c784;
-    }
-    .monster-card.wrong {
-      animation: shake 0.4s ease;
-      opacity: 0.3;
-      pointer-events: none;
-    }
+---
 
-    /* CSS Monster Drawing Base */
-    .monster-body {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50px;
-      margin: auto;
-    }
-    .eyes {
-      display: flex;
-      gap: 8px;
-      z-index: 2;
-    }
-    .eye {
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #333;
-    }
-    .pupil {
-      background: #333;
-      border-radius: 50%;
-    }
-    .arms {
-      position: absolute;
-      width: 120%;
-      display: flex;
-      justify-content: space-between;
-      top: 40%;
-      z-index: 1;
-    }
-    .arm {
-      background-color: inherit;
-      border-radius: 10px;
-      border: 2px solid rgba(0,0,0,0.1);
-    }
-    .legs {
-      position: absolute;
-      bottom: -20px;
-      display: flex;
-      gap: 20px;
-    }
-    .leg {
-      background-color: inherit;
-      border-radius: 10px;
-      border: 2px solid rgba(0,0,0,0.1);
-    }
+## 1. Learning Purpose
+- **Target Audience:** Hong Kong Primary 1 Students (Ages 6–7), native/non-native English learners.
+- **Subject:** English Language (Key Stage 1).
+- **Topic:** Body Part Adjectives (`big`, `small`, `fat`, `thin`, `long`, `short`).
+- **Learning Objectives (LOs):**
+  1. Students can identify and demonstrate understanding of target adjectives describing body parts (e.g., eyes, arms, legs, body, ears).
+  2. Students can synthesize multiple adjectives (e.g., "long arms" + "fat body") to match visual descriptors.
 
-    /* Variations */
-    /* Size */
-    .body-big { width: 110px; height: 130px; }
-    .body-small { width: 60px; height: 70px; }
-    /* Shape */
-    .body-fat { width: 120px; height: 110px; border-radius: 60px; }
-    .body-thin { width: 50px; height: 130px; border-radius: 30px; }
-    /* Eyes */
-    .eye-big { width: 36px; height: 36px; }
-    .eye-big .pupil { width: 18px; height: 18px; }
-    .eye-small { width: 16px; height: 16px; }
-    .eye-small .pupil { width: 8px; height: 8px; }
-    /* Arms */
-    .arm-long { width: 35px; height: 14px; }
-    .arm-short { width: 15px; height: 12px; }
-    /* Legs */
-    .leg-long { width: 14px; height: 40px; }
-    .leg-short { width: 12px; height: 15px; }
+---
 
-    /* Keyframes */
-    @keyframes shake {
-      0%, 100% {
+## 2. Game Concept
+- **Title:** The Monster Detective (怪獸大搜查)
+- **Storyline:** Mischievous friendly monsters are playing hide-and-seek in the city! Chief Detective Barney needs the students' help to find the specific monster matching the witness clues.
+- **Student Role:** Junior Detective.
+- **Mission:** Read/listen to visual & text clues, scan the suspect lineup, and tap the correct monster.
+- **Win Condition:** Solve 4 cases (rounds) to collect 4 Detective Badges and earn the "Master Detective Certificate".
+
+---
+
+## 3. Learning Journey
+1. **Title & Start Screen:** Widescreen 16:9 layout with vibrant cartoon visuals, background music toggle, and a big "START GAME" button.
+2. **Briefing Phase (5 seconds):** Detective Barney presents the Clue Card with natural browser Text-to-Speech (TTS) narration.
+3. **Investigation Phase (Gameplay):** Students examine 3 to 4 monsters on screen and tap the suspect that matches ALL clues.
+4. **Feedback & Reward Phase:**
+   - *Correct:* Interactive scanning animation, key text highlight, praise audio, and a shiny badge added to the progress bar.
+   - *Incorrect:* Gentle "Try again!" prompt, clue re-read automatically, and incorrect option disabled with a subtle wiggle animation.
+5. **Victory Screen:** Celebration particles/confetti, overall star score, and a "Play Again" button for high replayability.
+
+---
+
+## 4. Game Mechanics
+- **Direct Screen Interaction (Touch / Whiteboard Friendly):** Giant hitboxes for all interactive elements tailored for young learners and 16:9 interactive whiteboards/smartphones.
+- **Interactive Magnifying Glass:** Tapping a monster animates a detective magnifying glass scanning over the target body part.
+- **Multi-Sensory Audio Support:** Integrated Web Audio API sound effects (cheers, pops, re-try chimes) and native browser SpeechSynthesis (TTS) so every clue can be listened to by pressing a big "Speaker Button".
+- **Responsive Widescreen Layout:** Native 16:9 aspect ratio auto-scaling to fit smartboards, tablets, and smartphone landscape mode.
+
+---
+
+## 5. Questions & Progression Design
+The game features 4 escalating levels of difficulty (Progression):
+
+* **Level 1 (Single Feature - Size):**
+  - *Clue:* "Find the monster with **BIG** eyes!"
+  - *Distractors:* Monster with tiny eyes, Monster with 1 eye.
+* **Level 2 (Single Feature - Shape/Length):**
+  - *Clue:* "Find the monster with **LONG** legs!"
+  - *Distractors:* Monster with short legs, Monster with fat legs.
+* **Level 3 (Dual Features - Opposite Pairs):**
+  - *Clue:* "Find the monster with a **FAT** body and **SHORT** arms!"
+  - *Distractors:* Fat body + long arms, Thin body + short arms, Thin body + long arms.
+* **Level 4 (Complex Synthesis - Master Challenge):**
+  - *Clue:* "Find the monster with **SMALL** ears, a **THIN** body, and **LONG** arms!"
+  - *Distractors:* 3 monsters with mixed incorrect feature combinations.
+
+---
+
+## 6. Detailed Feedback Design
+- **On Correct Selection:**
+  - Play positive fanfare chime.
+  - Monster performs a celebratory jump/dance animation.
+  - A green checkmark appears and the matching adjective text flashes yellow/green.
+  - Text-to-Speech speaks: *"Great job! You found the monster with long legs!"*
+  - Automatically advances to the next level after 2 seconds.
+- **On Incorrect Selection:**
+  - Play a soft, non-punitive "oops" sound.
+  - The tapped incorrect monster gently shakes sideways and dims slightly (disabled).
+  - Voice hint speaks: *"Look carefully! Find the monster with FAT body!"* (highlights the key word "FAT" in red/bold on screen).
+  - Student is allowed to try again immediately without losing game progress.
+
+---
+
+## 7. UI / UX & Student Experience
+- **Age-Appropriate Design:** Colorful cartoon SVG monsters, rounded bubbly fonts (e.g., 'Fredoka', 'Comic Sans MS', rounded sans-serif), high contrast colors.
+- **Zero Friction:** No user account, no login, no typing required. Pure tap/click interface.
+- **Clear HUD (Heads-Up Display):**
+  - Top Left: Detective Badge Progress Bar (4 Empty Slots -> Filled with Badges).
+  - Top Center: Prominent Clue Box with Speaker Button.
+  - Top
