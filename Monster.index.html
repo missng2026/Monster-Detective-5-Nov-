@@ -1,110 +1,218 @@
-You are an expert Educational Game Developer and Front-End Engineer specializing in gamified interactive learning experiences for Primary 1 (Grade 1) students in Hong Kong. 
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monster Detective 怪獸大搜查</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', 'Comic Sans MS', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* Header & Progress */
+    header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .level-badge {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #0288d1;
+    }
+    .stamps {
+      display: flex;
+      gap: 10px;
+    }
+    .stamp {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border: 2px dashed #9e9e9e;
+    }
+    .stamp.active {
+      background-color: #ffd54f;
+      border: 2px solid #ffa000;
+    }
 
-Please create a complete, fully functional, standalone web-based educational game based on the detailed specifications below.
+    /* Clue Banner */
+    .clue-card {
+      width: 100%;
+      background: #ffffff;
+      border: 4px solid #4fc3f7;
+      border-radius: 24px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      position: relative;
+    }
+    .clue-title {
+      font-size: 1rem;
+      color: #757575;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .clue-text {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+    .clue-text span.highlight {
+      color: #e91e63;
+      text-decoration: underline;
+    }
+    .audio-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(76,175,80,0.3);
+      transition: transform 0.1s;
+    }
+    .audio-btn:active {
+      transform: scale(0.95);
+    }
 
----
+    /* Monster Grid */
+    .monster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+    .monster-card {
+      background: white;
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+      border: 4px solid transparent;
+      transition: all 0.2s ease;
+      min-height: 220px;
+      position: relative;
+    }
+    .monster-card:hover {
+      transform: translateY(-5px);
+      border-color: #81c784;
+    }
+    .monster-card.wrong {
+      animation: shake 0.4s ease;
+      opacity: 0.3;
+      pointer-events: none;
+    }
 
-### 1. Learning Purpose
-* **Target Audience**: Primary 1 (Grade 1) ESL / EFL students (Ages 6–7).
-* **Subject**: English Language (Vocabulary & Listening Comprehension).
-* **Topic**: Adjectives for Describing Physical Features (6 target words: **big, small, fat, thin, short, long**).
-* **Learning Objectives**:
-  1. Students can visually identify and differentiate the meaning of the 6 adjectives.
-  2. Students can comprehend basic descriptive spoken/written phrases combining target adjectives with body parts (e.g., "long arms", "fat body", "short legs").
-  3. Students can apply logic to process dual-adjective conditions simultaneously to identify the correct target.
+    /* CSS Monster Drawing Base */
+    .monster-body {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50px;
+      margin: auto;
+    }
+    .eyes {
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+    .eye {
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #333;
+    }
+    .pupil {
+      background: #333;
+      border-radius: 50%;
+    }
+    .arms {
+      position: absolute;
+      width: 120%;
+      display: flex;
+      justify-content: space-between;
+      top: 40%;
+      z-index: 1;
+    }
+    .arm {
+      background-color: inherit;
+      border-radius: 10px;
+      border: 2px solid rgba(0,0,0,0.1);
+    }
+    .legs {
+      position: absolute;
+      bottom: -20px;
+      display: flex;
+      gap: 20px;
+    }
+    .leg {
+      background-color: inherit;
+      border-radius: 10px;
+      border: 2px solid rgba(0,0,0,0.1);
+    }
 
----
+    /* Variations */
+    /* Size */
+    .body-big { width: 110px; height: 130px; }
+    .body-small { width: 60px; height: 70px; }
+    /* Shape */
+    .body-fat { width: 120px; height: 110px; border-radius: 60px; }
+    .body-thin { width: 50px; height: 130px; border-radius: 30px; }
+    /* Eyes */
+    .eye-big { width: 36px; height: 36px; }
+    .eye-big .pupil { width: 18px; height: 18px; }
+    .eye-small { width: 16px; height: 16px; }
+    .eye-small .pupil { width: 8px; height: 8px; }
+    /* Arms */
+    .arm-long { width: 35px; height: 14px; }
+    .arm-short { width: 15px; height: 12px; }
+    /* Legs */
+    .leg-long { width: 14px; height: 40px; }
+    .leg-short { width: 12px; height: 15px; }
 
-### 2. Game Concept
-* **Game Title**: The Monster Detective (怪獸大搜查)
-* **Story & Context**: A playful prankster monster is hiding in the town! The Mayor needs the help of a brave Little Detective to follow eyewitness clues and find the prankster monster among suspects.
-* **Student Role**: Junior Detective.
-* **Core Task**: Read or listen to eyewitness clue cards and click the exact monster that matches all specified physical features.
-* **Win Condition**: Successfully identify the correct monster in 3 consecutive levels to earn 3 Detective Badges, catch the prankster, and complete the case within 5 minutes.
-
----
-
-### 3. Learning Journey
-1. **Title Screen**: Energetic detective music/vibe, clear "START GAME" button, and audio instructions introducing the detective mission.
-2. **Level 1 (Single Feature - Warm Up)**: Screen displays 4 monsters. Clue focuses on 1 primary physical contrast (e.g., Size or Length).
-3. **Level 2 (Dual Features - Moderate Challenge)**: Screen displays 5 monsters. Clue combines 2 contrasting features (e.g., Body shape + Arm length).
-4. **Level 3 (Dual Features + Distractors - Master Challenge)**: Screen displays 6 monsters with subtle differences. Clue combines 2 features requiring close observation (e.g., Leg length + Body size).
-5. **Victory Screen**: Celebratory fanfare, giant "CASE SOLVED!" golden badge, summary of all 6 learned adjective words with sound buttons, and a "Play Again" button.
-
----
-
-### 4. Game Mechanics
-* **Interaction**: Point-and-Click / Tap interaction optimized for touchscreens (iPad/Tablets) and desktop mice. No typing required.
-* **Audio-Assisted Learning**: Every clue card features a prominent 🔊 **Speaker Button**. Clicking it uses Web Speech API (`SpeechSynthesisUtterance`) to read the English prompt aloud in a clear, friendly accent.
-* **Inspection Mode**: Hovering over or long-pressing a monster subtly highlights its key features (e.g., hovering shows a tool-tip or visual cue) to assist young learners.
-* **No Account Needed**: Instant browser play with local progress tracking during the session.
-
----
-
-### 5. Questions / Content Specifications
-Design 3 distinct progressive levels. The monsters presented in each level must visually represent their specified features clearly (using SVG graphics, CSS styling, or crisp HTML5 Canvas shapes).
-
-* **Level 1 (4 Monsters On Screen)**
-  * *Target Clue*: "Find the monster with **big** eyes and a **small** body!"
-  * *Monster Options*:
-    1. **Target**: Big eyes + Small body
-    2. Distractor 1: Small eyes + Big body
-    3. Distractor 2: Big eyes + Big body
-    4. Distractor 3: Small eyes + Small body
-
-* **Level 2 (5 Monsters On Screen)**
-  * *Target Clue*: "Find the monster with **long** arms and a **fat** body!"
-  * *Monster Options*:
-    1. **Target**: Long arms + Fat body
-    2. Distractor 1: Short arms + Fat body
-    3. Distractor 2: Long arms + Thin body
-    4. Distractor 3: Short arms + Thin body
-    5. Distractor 4: Long arms + Medium body
-
-* **Level 3 (6 Monsters On Screen)**
-  * *Target Clue*: "Find the monster with **short** legs and a **thin** body!"
-  * *Monster Options*:
-    1. **Target**: Short legs + Thin body
-    2. Distractor 1: Long legs + Thin body
-    3. Distractor 2: Short legs + Fat body
-    4. Distractor 3: Long legs + Fat body
-    5. Distractor 4: Short legs + Big body
-    6. Distractor 5: Long legs + Small body
-
----
-
-### 6. Feedback Design
-* **On Correct Selection**:
-  * Visual: The selected monster does a joyful wiggle/dance animation, handcuffs appear around it, and a magnifying glass "FOUND!" badge overlays the screen.
-  * Audio: Cheerful "Ding-Ding!" sound effect + Web Speech API voiceover saying: *"Great job! You found the monster with [Clue Text]!"*
-  * Progress: A star/detective badge lights up in the top header HUD. Auto-advances to the next level after 2 seconds.
-* **On Incorrect Selection**:
-  * Visual: The wrong monster giggles/shakes head gently and fades out slightly (or turns grey). It does NOT lock the user out.
-  * Hinting: The specific mis-matched words in the top clue card flash with bright yellow/red highlighting to draw focus back to the text (e.g., highlighting **fat** if they clicked a thin monster).
-  * Audio: Soft, funny "Oops" wobble sound (non-punitive). Voice prompt says: *"Not quite! Look for [key keyword]. Try again!"*
-  * Retry: Allows unlimited retries on the remaining valid monsters.
-
----
-
-### 7. Progression & Pedagogy
-* **Scaffolding**: Moves from 4 visual options with 1 main contrast to 6 visual options with 2 combined descriptors.
-* **Child-Centric Visuals**: Uses highly distinct, exaggerated visual proportions (e.g., extremely long vs. stubby short arms) so P.1 students never get confused by ambiguous artwork.
-
----
-
-### 8. Student Experience (UI/UX Guidelines)
-* **Age-Appropriate Design**: Playful, vibrant pastel color palette, friendly monster avatars, high-contrast text, cheerful fonts (e.g., 'Fredoka', 'Comic Neue', or rounded sans-serif).
-* **Screen Layout**:
-  * **Top Header**: Level Indicator (Level X of 3), Progress Badges (3 empty slots filling up), Audio Toggle button.
-  * **Banner Area**: Large Clue Card with clear text (e.g., "Find the monster with **long** arms...") and a prominent Speech Sound Button.
-  * **Main Stage**: Spacious grid displaying monster suspects with clear padding to avoid accidental misclicks on mobile.
-* **Responsiveness**: Fully responsive across Desktop browsers, iPads/Tablets, and Mobile screens. Large, thumb-friendly tap targets (minimum 80x80px for monster cards).
-
----
-
-### 9. Technical Requirements
-* **Single Output File**: Deliver everything in ONE single, fully self-contained `index.html` file containing HTML, CSS (`<style>`), and JavaScript (`<script>`).
-* **Zero External Assets Dependency**:
-  * Use **inline SVG code** or **HTML5 Canvas** graphics to draw all cute monsters procedurally, ensuring no broken image URLs.
-  * Use Web Audio API (synthesized tones/beeps) or Web Speech API (`window.speechSynthesis`) for sound effects and voiceovers so no external audio files are needed.
-* **Browser Compatibility**: Plain HTML5, CSS3, and standard vanilla JavaScript (ES6+). No heavy external frameworks (React/Vue) required. Must run directly by opening the `.html` file in Chrome, Safari, or Edge.
+    /* Keyframes */
+    @keyframes shake {
+      0%, 100% {
